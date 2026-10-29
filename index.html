@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIS-BEL INCRA | Sistema Oficial de Auditoria de Beleza N1</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-display {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    @keyframes pulse-glow {
+      0%, 100% {
+        box-shadow: 0 0 25px rgba(234, 179, 8, 0.4), inset 0 0 15px rgba(234, 179, 8, 0.2);
+      }
+      50% {
+        box-shadow: 0 0 50px rgba(234, 179, 8, 0.8), inset 0 0 25px rgba(234, 179, 8, 0.4);
+      }
+    }
+    .winner-glow {
+      animation: pulse-glow 2s infinite;
+    }
+    .roulette-viewport {
+      perspective: 1000px;
+      overflow: hidden;
+    }
+    .roulette-reel {
+      transition: transform 0.1s linear;
+      will-change: transform;
+    }
+    /* Estilização da barra de rolagem */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #064e3b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #10b981;
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-amber-400 selection:text-slate-900">
+
+  <!-- Faixa de cabeçalho estilo Governo / INCRA -->
+  <header class="border-b border-emerald-900/60 bg-emerald-950/80 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <!-- Brasão / Logo fictício governamental -->
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-green-700 flex items-center justify-center shadow-lg shadow-emerald-950/50 border border-emerald-400/30 text-xl font-black">
+          🌱
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs uppercase tracking-widest text-emerald-400 font-bold">INCRA • GOVERNO FEDERAL</span>
+            <span class="text-[10px] bg-emerald-800/80 text-emerald-200 px-2 py-0.5 rounded-full font-mono">SIS-BEL v4.2</span>
+          </div>
+          <h1 class="text-sm md:text-base font-bold text-slate-100 leading-tight">
+            Comitê Especial de Avaliação Estética e Charme do N1
+          </h1>
+        </div>
+      </div>
+
+      <div class="hidden sm:flex items-center gap-2 text-xs text-slate-300 bg-emerald-900/40 px-3 py-1.5 rounded-lg border border-emerald-700/40">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span>Auditoria 100% Criptografada</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-grow max-w-4xl mx-auto w-full px-4 py-8 flex flex-col items-center">
+    
+    <!-- Chamada Principal -->
+    <div class="text-center max-w-2xl mb-8 space-y-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider">
+        <span>⚖️ Sorteio Imparcial & Auditado</span>
+      </div>
+      <h2 class="text-3xl md:text-5xl font-black tracking-tight font-display bg-gradient-to-r from-emerald-300 via-amber-200 to-yellow-400 bg-clip-text text-transparent">
+        Quem é o N1 mais bonito do INCRA?
+      </h2>
+      <p class="text-slate-400 text-sm md:text-base">
+        A inteligência artificial do INCRA cruzou métricas de fotogenia, carisma em reuniões, alinhamento de postura e presença de gabinete para eleger o número um indiscutível.
+      </p>
+    </div>
+
+    <!-- Roleta / Máquina do Sorteio -->
+    <div class="w-full bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden backdrop-blur-xl">
+      <!-- Luzes decorativas de fundo -->
+      <div class="absolute -top-24 -left-24 w-72 h-72 bg-emerald-600/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-72 h-72 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Visor da Roleta -->
+      <div class="relative mb-8">
+        <div class="text-center mb-2">
+          <span class="text-xs font-mono uppercase tracking-widest text-slate-400">Visor de Apuração Biométrica</span>
+        </div>
+        
+        <!-- Caixa do Nome em Destaque -->
+        <div class="relative bg-slate-950 rounded-2xl border-2 border-emerald-500/40 p-6 md:p-8 overflow-hidden shadow-inner flex flex-col items-center justify-center min-h-[160px]">
+          <!-- Linhas guia estilo escâner -->
+          <div class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent"></div>
+          <div class="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent"></div>
+          <div id="scanLine" class="hidden absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent shadow-[0_0_15px_#f59e0b] top-0 transition-all duration-300"></div>
+
+          <!-- Nome Atual / Mostrador -->
+          <div id="displayContainer" class="flex flex-col items-center text-center transition-all">
+            <span id="namePrefix" class="text-xs uppercase tracking-widest text-emerald-400 font-semibold mb-1 opacity-80">
+              Aguardando Início do Sorteio
+            </span>
+            <span id="nameDisplay" class="text-2xl md:text-4xl lg:text-5xl font-black font-display text-white tracking-wide transition-all">
+              ???
+            </span>
+            <span id="nameRole" class="text-xs text-slate-500 font-mono mt-2">
+              Clique no botão abaixo para processar os votos
+            </span>
+          </div>
+
+          <!-- Indicador de Status -->
+          <div id="statusBadge" class="hidden mt-3 px-3 py-0.5 rounded-full text-[11px] font-mono tracking-wider"></div>
+        </div>
+      </div>
+
+      <!-- Botão Gigante de Ação -->
+      <div class="flex flex-col sm:flex-row gap-4 items-center justify-center">
+        <button id="btnSortear" onclick="startRoulette()" class="w-full sm:w-auto px-8 py-5 rounded-2xl bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-black text-lg md:text-xl shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3">
+          <span class="text-2xl">🎲</span>
+          <span>SORTEAR O N1 MAIS BONITO</span>
+        </button>
+
+        <button id="btnReset" onclick="resetRoulette()" class="w-full sm:w-auto px-5 py-5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold border border-slate-700 transition flex items-center justify-center gap-2">
+          <span>🔄</span>
+          <span>Limpar</span>
+        </button>
+      </div>
+
+      <!-- Estatísticas / Disclaimer Engraçado -->
+      <div class="mt-8 pt-6 border-t border-slate-800/80 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div class="bg-slate-950/40 p-3 rounded-xl border border-slate-800/50">
+          <div class="text-[10px] text-slate-400 uppercase font-mono">Candidatos Inscritos</div>
+          <div id="totalCandidates" class="text-lg font-bold text-slate-200 mt-0.5">14 concorrentes</div>
+        </div>
+        <div class="bg-slate-950/40 p-3 rounded-xl border border-slate-800/50">
+          <div class="text-[10px] text-slate-400 uppercase font-mono">Margem de Erro</div>
+          <div class="text-lg font-bold text-emerald-400 mt-0.5">0.00%</div>
+        </div>
+        <div class="bg-slate-950/40 p-3 rounded-xl border border-slate-800/50">
+          <div class="text-[10px] text-slate-400 uppercase font-mono">Imparcialidade</div>
+          <div class="text-lg font-bold text-amber-400 mt-0.5">100% Auditado</div>
+        </div>
+        <div class="bg-slate-950/40 p-3 rounded-xl border border-slate-800/50">
+          <div class="text-[10px] text-slate-400 uppercase font-mono">Favorito do Povo</div>
+          <div class="text-lg font-bold text-yellow-300 mt-0.5 truncate">Sillas ⭐</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de Concorrentes & Adicionar Novos -->
+    <div class="w-full mt-8 bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 backdrop-blur">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+        <div>
+          <h3 class="text-lg font-bold text-slate-200 flex items-center gap-2">
+            <span>📋</span> Lista Oficial de Concorrentes
+          </h3>
+          <p class="text-xs text-slate-400">
+            Você pode adicionar outros servidores para fingir que a disputa é acirrada.
+          </p>
+        </div>
+        
+        <!-- Formulário para adicionar candidato -->
+        <form onsubmit="addCandidate(event)" class="flex gap-2 w-full md:w-auto">
+          <input 
+            type="text" 
+            id="newCandidateInput" 
+            placeholder="Nome de outro servidor..." 
+            class="bg-slate-950 border border-slate-700 text-sm rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-emerald-500 w-full md:w-64"
+            maxlength="40"
+          >
+          <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-xl text-sm font-semibold transition shrink-0">
+            + Adicionar
+          </button>
+        </form>
+      </div>
+
+      <!-- Tags dos concorrentes -->
+      <div id="candidatesList" class="flex flex-wrap gap-2 max-h-36 overflow-y-auto pr-1">
+        <!-- Renderizado dinamicamente via Javascript -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modal do Vencedor Consagrado -->
+  <div id="winnerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-gradient-to-b from-slate-900 via-slate-900 to-amber-950/40 border-2 border-amber-400/80 rounded-3xl p-6 md:p-8 max-w-lg w-full text-center relative shadow-2xl winner-glow transform scale-95 transition-transform duration-300" id="winnerModalContent">
+      
+      <!-- Coroa / Troféu Flutuante -->
+      <div class="text-6xl mb-2 animate-bounce">👑</div>
+
+      <div class="inline-block px-4 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 font-mono text-xs font-bold uppercase tracking-widest mb-3">
+        Resultado Homologado pelo SIS-BEL
+      </div>
+
+      <h3 class="text-3xl md:text-4xl font-black font-display text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 leading-tight">
+        sillas, o N1 mais lindo
+      </h3>
+
+      <p class="text-sm text-emerald-300/90 font-medium mt-1">
+        🌟 Campeão Absoluto de Beleza & Charme Institucional
+      </p>
+
+      <!-- Mensagem bem-humorada aleatória -->
+      <div class="my-5 p-4 bg-slate-950/60 rounded-2xl border border-slate-800 text-xs md:text-sm text-slate-300 italic" id="winnerQuote">
+        "O sistema reprocessou 10 milhões de combinações e concluiu: não há concorrência à altura."
+      </div>
+
+      <!-- Certificado Fictício -->
+      <div class="text-left bg-emerald-950/40 border border-emerald-500/30 rounded-xl p-3 text-[11px] font-mono text-emerald-300/80 mb-6 space-y-1">
+        <div>• Protocolo: SISBEL-INCRA-N1-SILLAS-001</div>
+        <div>• Parecer Técnico: Charme nível executivo incontestável</div>
+        <div>• Status: Eleito por unanimidade algorítmica</div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <button onclick="closeWinnerModal()" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-black text-sm hover:from-amber-300 hover:to-yellow-400 transition shadow-lg shadow-amber-500/20">
+          Aceitar o Inevitável ✨
+        </button>
+        <button onclick="retryRoulette()" class="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold border border-slate-700 transition">
+          Sorteio de Novo (Vai que...)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rodapé -->
+  <footer class="border-t border-slate-900 bg-slate-950 py-4 text-center text-xs text-slate-500">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+      <span>© 2026 SIS-BEL • Sistema de Apuração do INCRA • Todos os votos auditados e conferidos.</span>
+      <span class="text-amber-400/80 font-medium">Sillas: O único e verdadeiro N1 mais lindo.</span>
+    </div>
+  </footer>
+
+  <!-- Lógica JavaScript do Sorteio Viciado -->
+  <script>
+    // Lista inicial de candidatos aleatórios (servidores fictícios do INCRA)
+    let candidates = [
+      "Dr. Valdomiro da Cartografia",
+      "Wellington da Logística",
+      "Coronel Eustáquio",
+      "Dr. Juvenal (Superintendência)",
+      "Reginaldo do Georreferenciamento",
+      "Claudemir dos Processos",
+      "Dr. Epaminondas das Audiências",
+      "Hamilton do Almoxarifado",
+      "Sebastião da TI",
+      "Marcão da Ouvidoria",
+      "Dr. Lindolfo do Crédito Fundiário",
+      "Geraldo das Notificações",
+      "Edmilson dos Pareceres"
+    ];
+
+    // O verdadeiro e único vencedor imutável
+    const TRUE_WINNER = "sillas, o N1 mais lindo";
+
+    // Frases bem-humoradas para o modal
+    const funnyQuotes = [
+      "\"O sistema reprocessou 10 milhões de combinações quânticas e concluiu: não há concorrência à altura do Sillas.\"",
+      "\"A inteligência artificial tentou buscar outro vencedor, mas a beleza do Sillas travou os servidores de Brasília.\"",
+      "\"Auditoria externa independente concluída: a ciência, a matemática e o bom gosto apontam para o Sillas.\"",
+      "\"Nem com recurso no plenário é possível derrubar essa liminar estética: Sillas, o N1 supremo.\"",
+      "\"Superintendente de carisma, doutor em elegância e N1 indiscutível de todo o INCRA.\"",
+      "\"Tentamos rodar um algoritmo cego, mas até ele se rendeu ao charme do Sillas.\""
+    ];
+
+    let isSpinning = false;
+    let audioCtx = null;
+
+    // Inicialização do AudioContext (Web Audio API para sons sem arquivos externos)
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    // Toca som de 'tick' da roleta
+    function playTickSound(frequency = 600) {
+      try {
+        const ctx = getAudioContext();
+        if (ctx.state === 'suspended') ctx.resume();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(frequency, ctx.currentTime);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.05);
+      } catch (e) {
+        // Áudio silenciado ou não permitido
+      }
+    }
+
+    // Fanfarra triunfal ao finalizar o sorteio (Acorde vitorioso Dó-Mi-Sol-Dó)
+    function playVictoryFanfare() {
+      try {
+        const ctx = getAudioContext();
+        if (ctx.state === 'suspended') ctx.resume();
+        const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99]; // C4, E4, G4, C5, E5, G5
+        notes.forEach((freq, index) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + index * 0.1);
+          gain.gain.setValueAtTime(0.12, ctx.currentTime + index * 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + index * 0.1 + 0.6);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + index * 0.1);
+          osc.stop(ctx.currentTime + index * 0.1 + 0.7);
+        });
+      } catch (e) {
+        // Ignore
+      }
+    }
+
+    // Renderiza a lista de concorrentes na tela
+    function renderCandidates() {
+      const container = document.getElementById('candidatesList');
+      container.innerHTML = '';
+
+      // Mostra o Sillas com badge dourada especial na lista
+      const sillasBadge = document.createElement('span');
+      sillasBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 border border-amber-400 text-amber-300 shadow-sm';
+      sillasBadge.innerHTML = '👑 <span>Sillas (Favorito Absoluto)</span>';
+      container.appendChild(sillasBadge);
+
+      candidates.forEach((cand, index) => {
+        const badge = document.createElement('span');
+        badge.className = 'inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700 hover:border-slate-600 transition';
+        badge.innerHTML = `
+          <span>${cand}</span>
+          <button onclick="removeCandidate(${index})" class="text-slate-500 hover:text-red-400 ml-1 font-bold text-xs" title="Remover concorrente">×</button>
+        `;
+        container.appendChild(badge);
+      });
+
+      document.getElementById('totalCandidates').innerText = `${candidates.length + 1} concorrentes`;
+    }
+
+    // Adiciona novo concorrente
+    function addCandidate(event) {
+      event.preventDefault();
+      const input = document.getElementById('newCandidateInput');
+      const val = input.value.trim();
+      if (!val) return;
+
+      if (val.toLowerCase().includes('sillas')) {
+        alert("O Sillas já está inscrito e liderando todas as pesquisas com folga!");
+        input.value = '';
+        return;
+      }
+
+      candidates.push(val);
+      input.value = '';
+      renderCandidates();
+    }
+
+    // Remove concorrente
+    function removeCandidate(index) {
+      if (isSpinning) return;
+      candidates.splice(index, 1);
+      renderCandidates();
+    }
+
+    // Inicia o sorteio (com animação de suspense, mas SEMPRE cravando no Sillas!)
+    function startRoulette() {
+      if (isSpinning) return;
+      isSpinning = true;
+
+      const btnSortear = document.getElementById('btnSortear');
+      const btnReset = document.getElementById('btnReset');
+      const display = document.getElementById('nameDisplay');
+      const prefix = document.getElementById('namePrefix');
+      const role = document.getElementById('nameRole');
+      const scanLine = document.getElementById('scanLine');
+      const statusBadge = document.getElementById('statusBadge');
+
+      btnSortear.disabled = true;
+      btnReset.disabled = true;
+      btnSortear.classList.add('opacity-50', 'cursor-not-allowed');
+
+      scanLine.classList.remove('hidden');
+      statusBadge.classList.remove('hidden');
+      statusBadge.className = 'mt-3 px-3 py-0.5 rounded-full text-[11px] font-mono tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse';
+      statusBadge.innerText = '• PROCESSANDO BANCO DE DADOS BIOMÉTRICO...';
+
+      prefix.innerText = "Cruzando Algoritmos de Beleza...";
+      role.innerText = "Avaliando simetria facial e carisma executivo...";
+
+      // Pool de nomes para girar rapidamente (incluindo alguns aleatórios)
+      const shufflePool = [...candidates, "Dr. Juvenal", "Wellington da Logística", "Dr. Valdomiro", "Coronel Eustáquio", "Dr. Lindolfo"];
+
+      let currentStep = 0;
+      const totalSteps = 45; // Quantidade de giros
+      let speed = 40; // Velocidade inicial em ms
+
+      function step() {
+        currentStep++;
+
+        // Escolhe um nome aleatório para mostrar durante a animação
+        const randomName = shufflePool[Math.floor(Math.random() * shufflePool.length)];
+        display.innerText = randomName;
+        display.className = "text-2xl md:text-4xl lg:text-5xl font-black font-display text-slate-300 tracking-wide blur-[0.5px]";
+
+        playTickSound(400 + (currentStep * 8));
+
+        // Conforme se aproxima do final, desacelera dramaticamente (efeito slot machine)
+        if (currentStep > 25) {
+          speed += 15;
+        }
+        if (currentStep > 35) {
+          speed += 40;
+          statusBadge.innerText = '• AVALIAÇÃO FINAL EM ANDAMENTO...';
+        }
+        if (currentStep > 40) {
+          speed += 80;
+        }
+
+        if (currentStep < totalSteps) {
+          setTimeout(step, speed);
+        } else {
+          // O MOMENTO DECISIVO: crava SEMPRE no Sillas!
+          finishWinner();
+        }
+      }
+
+      step();
+    }
+
+    // Finaliza o sorteio com o resultado viciado
+    function finishWinner() {
+      const display = document.getElementById('nameDisplay');
+      const prefix = document.getElementById('namePrefix');
+      const role = document.getElementById('nameRole');
+      const scanLine = document.getElementById('scanLine');
+      const statusBadge = document.getElementById('statusBadge');
+      const btnSortear = document.getElementById('btnSortear');
+      const btnReset = document.getElementById('btnReset');
+
+      // Trava no nome exato solicitado
+      display.innerText = TRUE_WINNER;
+      display.className = "text-3xl md:text-5xl lg:text-6xl font-black font-display text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 tracking-wide drop-shadow-[0_0_25px_rgba(234,179,8,0.6)] animate-pulse";
+      
+      prefix.innerText = "🏆 VENCEDOR INDISCUTÍVEL APURADO";
+      prefix.className = "text-xs uppercase tracking-widest text-amber-400 font-black mb-1";
+
+      role.innerText = "👑 N1 Oficial do INCRA • Eleito com 100% dos votos válidos";
+      role.className = "text-sm text-emerald-400 font-semibold mt-2";
+
+      scanLine.classList.add('hidden');
+      statusBadge.className = 'mt-3 px-3 py-0.5 rounded-full text-[11px] font-mono tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold';
+      statusBadge.innerText = '✓ AUDITORIA CONCLUÍDA: RESULTADO IRREVERSÍVEL';
+
+      // Toca fanfarra e solta confetes
+      playVictoryFanfare();
+      triggerConfettiExplosion();
+
+      // Habilita os botões novamente
+      btnSortear.disabled = false;
+      btnReset.disabled = false;
+      btnSortear.classList.remove('opacity-50', 'cursor-not-allowed');
+      isSpinning = false;
+
+      // Abre o modal de comemoração após 600ms
+      setTimeout(() => {
+        openWinnerModal();
+      }, 700);
+    }
+
+    // Explosão de confetes coloridos
+    function triggerConfettiExplosion() {
+      if (typeof confetti === 'function') {
+        // Rajada do centro
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#f59e0b', '#10b981', '#fbbf24', '#34d399', '#ffffff']
+        });
+
+        // Rajadas laterais
+        setTimeout(() => {
+          confetti({
+            particleCount: 50,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors: ['#f59e0b', '#10b981', '#fbbf24']
+          });
+          confetti({
+            particleCount: 50,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors: ['#f59e0b', '#10b981', '#fbbf24']
+          });
+        }, 250);
+      }
+    }
+
+    // Modal
+    function openWinnerModal() {
+      const modal = document.getElementById('winnerModal');
+      const content = document.getElementById('winnerModalContent');
+      const quoteEl = document.getElementById('winnerQuote');
+
+      // Sorteia uma frase cômica para o modal
+      const randomQuote = funnyQuotes[Math.floor(Math.random() * funnyQuotes.length)];
+      quoteEl.innerText = randomQuote;
+
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        content.classList.remove('scale-95');
+        content.classList.add('scale-100');
+      }, 10);
+    }
+
+    function closeWinnerModal() {
+      const modal = document.getElementById('winnerModal');
+      const content = document.getElementById('winnerModalContent');
+      modal.classList.add('opacity-0');
+      content.classList.remove('scale-100');
+      content.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+    // Tentar de novo (reabre o sorteio para o usuário achar que agora vai dar outro, e dá Sillas de novo)
+    function retryRoulette() {
+      closeWinnerModal();
+      setTimeout(() => {
+        startRoulette();
+      }, 400);
+    }
+
+    // Reset simples da tela
+    function resetRoulette() {
+      if (isSpinning) return;
+      const display = document.getElementById('nameDisplay');
+      const prefix = document.getElementById('namePrefix');
+      const role = document.getElementById('nameRole');
+      const statusBadge = document.getElementById('statusBadge');
+
+      display.innerText = "???";
+      display.className = "text-2xl md:text-4xl lg:text-5xl font-black font-display text-white tracking-wide";
+      prefix.innerText = "Aguardando Início do Sorteio";
+      prefix.className = "text-xs uppercase tracking-widest text-emerald-400 font-semibold mb-1 opacity-80";
+      role.innerText = "Clique no botão abaixo para processar os votos";
+      role.className = "text-xs text-slate-500 font-mono mt-2";
+      statusBadge.classList.add('hidden');
+    }
+
+    // Inicialização ao carregar a página
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCandidates();
+    });
+  </script>
+</body>
+</html>
